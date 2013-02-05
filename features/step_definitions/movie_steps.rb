@@ -37,3 +37,29 @@ When /I (un)?check the following ratings: (.*)/ do |uncheck, rating_list|
     step %{I #{uncheck}check "ratings_#{rating}"}
   end
 end
+
+When /I (un)?check all ratings/ do |uncheck|
+  step %{I #{uncheck}check the following ratings: G, PG, PG-13, NC-17, R}
+end
+
+Then /I should see (un)?checked all ratings/ do |uncheck|
+  step %{I should see #{uncheck}checked the following ratings: G, PG, PG-13, NC-17, R}
+end
+
+Then  /I should( not)? see movies with the following ratings: (.*)/ do |not_see, rating_list|
+  regex = /^#{rating_list.gsub(', ', '|')}$/
+  cells = page.all("table#movies tbody tr td[2]")
+  cells.each do |td|
+    if not_see == nil
+      td.text.should =~ regex
+    else
+      td.text.should_not =~ regex
+    end
+  end
+end
+
+Then  /I should see (un)?checked the following ratings: (.*)/ do |uncheck, rating_list|
+  rating_list.split(", ").each do |rating|
+    step %{the "ratings_#{rating}" checkbox should#{uncheck == nil ? '' : ' not'} be checked}
+  end
+end
