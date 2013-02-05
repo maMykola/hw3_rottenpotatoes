@@ -4,15 +4,14 @@ class Movie < ActiveRecord::Base
 end
 
 Then /I should see all of the movies/ do
-  rows = page.all("table#movies tbody tr").count
-  rows.should == 10
+  all('table#movies tbody tr').count.should == 10
 end
 
 Given /the following movies exist/ do |movies_table|
   movies_table.hashes.each do |movie|
     # each returned element will be a hash whose key is the table header.
     # you should arrange to add that movie to the database here.
-    Movie.create(movie)
+    Movie.create!(movie)
   end
 end
 
@@ -38,22 +37,19 @@ When /I (un)?check the following ratings: (.*)/ do |uncheck, rating_list|
   end
 end
 
-When /I (un)?check all ratings/ do |uncheck|
-  step %{I #{uncheck}check the following ratings: G, PG, PG-13, NC-17, R}
-end
-
-Then /I should see (un)?checked all ratings/ do |uncheck|
-  step %{I should see #{uncheck}checked the following ratings: G, PG, PG-13, NC-17, R}
-end
-
 Then  /I should( not)? see movies with the following ratings: (.*)/ do |not_see, rating_list|
-  regex = /^#{rating_list.gsub(', ', '|')}$/
-  cells = page.all("table#movies tbody tr td[2]")
-  cells.each do |td|
-    if not_see == nil
-      td.text.should =~ regex
+  all_ratings =rating_list.split(/\s*,\s*/)
+  td_list = all('table#movies tbody tr td[2]')
+
+  if !not_see then
+    assert td_list.count > 0
+  end
+
+  td_list.each do |td_rating|
+    if not_see then
+      assert !all_ratings.include?(td_rating.text)
     else
-      td.text.should_not =~ regex
+      assert all_ratings.include?(td_rating.text)
     end
   end
 end

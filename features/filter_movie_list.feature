@@ -20,10 +20,10 @@ Background: movies have been added to database
   | Chicken Run             | G      | 21-Jun-2000  |
 
   And  I am on the RottenPotatoes home page
-  
+
 Scenario: restrict to movies with 'PG' or 'R' ratings
   # enter step(s) to check the 'PG' and 'R' checkboxes
-  When  I check the following ratings: PG, R
+  Given I check the following ratings: PG, R
   # enter step(s) to uncheck all other checkboxes
   And   I uncheck the following ratings: G, PG-13, NC-17
   # enter step to "submit" the search form on the homepage
@@ -34,13 +34,11 @@ Scenario: restrict to movies with 'PG' or 'R' ratings
   And   I should not see movies with the following ratings: G, PG-13, NC-17
 
 Scenario: no ratings selected
-  When  I uncheck the following ratings: G, PG, PG-13, NC-17, R
-  And   I press "Refresh"
-  Then  I should be on the movies page
-  And   I should see checked the following ratings: G, PG, PG-13, NC-17, R
+  Given I uncheck the following ratings: G, PG, PG-13, NC-17, R
+  When  I press "Refresh"
+  Then  I should see all of the movies
 
 Scenario: all ratings selected
-  When  I check the following ratings: G, PG, PG-13, NC-17, R
-  And   I press "Refresh"
-  Then  I should be on the movies page
-  And   I should see all of the movies
+  Given I check the following ratings: G, PG, PG-13, NC-17, R
+  When  I press "Refresh"
+  Then  I should see all of the movies
