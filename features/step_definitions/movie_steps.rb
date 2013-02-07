@@ -1,8 +1,5 @@
 # Add a declarative step here for populating the DB with movies.
 
-class Movie < ActiveRecord::Base
-end
-
 Then /I should see all of the movies/ do
   all('table#movies tbody tr').count.should == 10
 end
